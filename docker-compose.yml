@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: library_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: dlibrary
+      POSTGRES_USER: dlibrary
+      POSTGRES_PASSWORD: dlibrary
+    ports:
+      - "5444:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: 
+      context: ./backend # Aponta para a pasta onde está o Dockerfile do Java
+    container_name: library_backend
+    ports:
+      - "8080:8080" # Expõe a porta 8080 para a sua máquina
+    depends_on:
+      - db # Garante que o back-end só inicie depois do banco de dados
+    environment:
+      # Sobrescreve as configurações do seu application.yml
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/dlibrary
+      - SPRING_DATASOURCE_USERNAME=dlibrary
+      - SPRING_DATASOURCE_PASSWORD=dlibrary
+
+volumes:
+  postgres_data:
