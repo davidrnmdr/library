@@ -34,6 +34,8 @@ public class BookService {
         book.setTitle(dto.title());
         book.setIsbn(dto.isbn());
         book.setCategories(categories);
+        book.setCopies(dto.copies());
+        book.setAvailableCopies(dto.copies());
         return BookMapper.toDto(bookRepository.save(book));
     }
 
@@ -52,7 +54,31 @@ public class BookService {
             Set<Category> categories = categoryService.findAllByIdIn(dto.categoriesIds());
             book.setCategories(categories);
         }
+        if (dto.copies() != null && !book.getCopies().equals(dto.copies())) {
+            int difference = dto.copies() - book.getCopies();
+            book.setCopies(dto.copies());
+            book.setAvailableCopies(book.getAvailableCopies() + difference);
+        }
         return BookMapper.toDto(bookRepository.save(book));
+    }
 
+    public Book findById(Long id) {
+        return bookRepository.findById(id).orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+    }
+
+    public Book borrowBook(Book book) {
+        if (book.getAvailableCopies() <= 0) {
+            throw new RuntimeException("Não há cópias disponíveis para empréstimo");
+        }
+        book.setAvailableCopies(book.getAvailableCopies() - 1);
+        return bookRepository.save(book);
+    }
+
+    public void returnBook(Book book) {
+        if (book.getAvailableCopies() >= book.getCopies()) {
+            throw new RuntimeException("Todas as cópias já estão disponíveis");
+        }
+        book.setAvailableCopies(book.getAvailableCopies() + 1);
+        bookRepository.save(book);
     }
 }

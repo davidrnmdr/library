@@ -2,6 +2,7 @@ package org.library.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.hibernate.validator.constraints.ISBN;
 
 import java.util.Set;
@@ -18,6 +19,9 @@ public record CreateBookDTO(
         String isbn,
 
         @NotEmpty
-        Set<Long> categoriesIds
+        Set<Long> categoriesIds,
+
+        @PositiveOrZero(message = "O número de cópias deve ser zero ou positivo")
+        Integer copies
 ) {
 }

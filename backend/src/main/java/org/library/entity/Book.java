@@ -28,4 +28,10 @@ public class Book {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Category> categories;
+
+    @Column(name = "copies", nullable = false)
+    private Integer copies;
+
+    @Column(name = "available_copies", nullable = false)
+    private Integer availableCopies;
 }
