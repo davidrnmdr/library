@@ -1,6 +1,23 @@
 <div class="bg-white rounded-xl overflow-hidden shadow-md hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-pointer flex flex-col">
-  <div class="bg-gradient-to-br from-gray-700 to-gray-900 h-36 flex items-center justify-center">
-    <span class="text-5xl">📖</span>
+  <div class="bg-gradient-to-br from-gray-700 to-gray-900 h-48 flex items-center justify-center overflow-hidden relative">
+    <!-- Loading spinner -->
+    <div *ngIf="imageLoading && coverUrl" class="absolute inset-0 flex items-center justify-center bg-gray-800">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+    </div>
+    
+    <!-- Imagem da capa -->
+    <img 
+      *ngIf="coverUrl && !imageError" 
+      [src]="coverUrl" 
+      [alt]="book.title"
+      (load)="onImageLoad()"
+      (error)="onImageError()"
+      [class.hidden]="imageLoading"
+      class="w-full h-full object-cover"
+    />
+    
+    <!-- Ícone fallback -->
+    <span *ngIf="(!coverUrl || imageError) && !imageLoading" class="text-5xl">📖</span>
   </div>
   <div class="p-4 flex flex-col gap-1.5 flex-1">
     <h3 class="text-sm font-bold text-gray-800 leading-snug">{{ book.title }}</h3>

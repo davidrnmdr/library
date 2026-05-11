@@ -5,19 +5,44 @@
       <span class="text-2xl">📚</span>
       <h1 class="text-lg font-bold text-white">Biblioteca Comunitária</h1>
     </div>
-    <div class="flex gap-3">
-      <button
-        class="bg-green-500 hover:bg-green-600 text-white rounded-lg px-4 py-2 text-sm font-semibold transition-colors cursor-pointer border-none"
-        (click)="goToBorrowBook()"
-      >
-        📖 Emprestar
-      </button>
-      <button
-        class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 text-sm font-semibold transition-colors cursor-pointer border-none"
-        (click)="goToAddBook()"
-      >
-        <span class="text-lg">+</span> Adicionar Livro
-      </button>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center" *ngIf="isAdmin">
+        <p-button
+          label="Devolver"
+          icon="pi pi-upload"
+          [text]="true"
+          severity="secondary"
+          styleClass="text-white hover:bg-gray-700"
+          (onClick)="goToReturnBook()"
+        />
+        <div class="h-8 w-px bg-gray-600"></div>
+        <p-button
+          label="Emprestar"
+          icon="pi pi-book"
+          [text]="true"
+          severity="secondary"
+          styleClass="text-white hover:bg-gray-700"
+          (onClick)="goToBorrowBook()"
+        />
+        <div class="h-8 w-px bg-gray-600"></div>
+        <p-button
+          label="Adicionar Livro"
+          icon="pi pi-plus"
+          [text]="true"
+          severity="secondary"
+          styleClass="text-white hover:bg-gray-700"
+          (onClick)="goToAddBook()"
+        />
+        <div class="h-8 w-px bg-gray-600"></div>
+      </div>
+      <p-button
+        label="Sair"
+        icon="pi pi-sign-out"
+        [text]="true"
+        severity="secondary"
+        styleClass="text-white hover:bg-gray-700"
+        (onClick)="logout()"
+      />
     </div>
   </header>
 

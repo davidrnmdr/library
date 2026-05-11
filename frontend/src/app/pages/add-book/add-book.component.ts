@@ -2,27 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
+import { InputText } from 'primeng/inputtext';
+import { InputNumber } from 'primeng/inputnumber';
+import { Checkbox } from 'primeng/checkbox';
+import { Button } from 'primeng/button';
+import { Card } from 'primeng/card';
 import { BookService } from '../../services/book.service';
 import { CategoryService } from '../../services/category.service';
 import { NotificationService } from '../../services/notification.service';
-import { Category } from '../../components/book-card/book-card.component';
+import { AuthService } from '../../services/auth.service';
+import { Category } from '../../models/category.model';
 
 @Component({
   selector: 'app-add-book',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor],
+  imports: [ReactiveFormsModule, NgIf, NgFor, InputText, InputNumber, Checkbox, Button, Card],
   templateUrl: './add-book.component.html',
   styleUrl: './add-book.component.css'
 })
 export class AddBookComponent implements OnInit {
   form: FormGroup;
   categories: Category[] = [];
+  isAdmin: boolean = false;
 
   constructor(
     private router: Router,
     private bookService: BookService,
     private categoryService: CategoryService,
     private notificationService: NotificationService,
+    private authService: AuthService,
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
@@ -35,6 +43,7 @@ export class AddBookComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isAdmin = this.authService.isAdmin();
     this.categoryService.getAll().subscribe({
       next: cats => this.categories = cats,
       error: err => console.error('Erro ao buscar categorias:', err)
@@ -71,5 +80,22 @@ export class AddBookComponent implements OnInit {
   isInvalid(field: string): boolean {
     const control = this.form.get(field);
     return !!(control?.invalid && control?.touched);
+  }
+
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+
+  goToBorrowBook() {
+    this.router.navigate(['books/borrow']);
+  }
+
+  goToReturnBook() {
+    this.router.navigate(['books/return']);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

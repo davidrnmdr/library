@@ -1,25 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Select } from 'primeng/select';
+import { Button } from 'primeng/button';
+import { Card } from 'primeng/card';
 import { BookService } from '../../services/book.service';
-import { Book } from '../../components/book-card/book-card.component';
-import { UserService, User } from '../../services/user.service';
+import { Book } from '../../models/book.model';
+import { User } from '../../models/user.model';
+import { UserService } from '../../services/user.service';
 import { BorrowingService } from '../../services/borrowing.service';
 import { NotificationService } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
+import { avaliableBooks } from '../../models/avaliable-books.model';
 
 @Component({
   selector: 'app-borrow-book',
   standalone: true,
-  imports: [ReactiveFormsModule, NgFor, NgIf],
+  imports: [ReactiveFormsModule, CommonModule, Select, Button, Card],
   templateUrl: './borrow-book.component.html',
   styleUrl: './borrow-book.component.css'
 })
 export class BorrowBookComponent implements OnInit {
   form: FormGroup;
   users: User[] = [];
-  books: Book[] = [];
-  minDate: string;
+  avaliableBooks: avaliableBooks[] = [];
+  isAdmin: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -27,28 +33,17 @@ export class BorrowBookComponent implements OnInit {
     private userService: UserService,
     private borrowingService: BorrowingService,
     private notificationService: NotificationService,
+    private authService: AuthService,
     private router: Router
   ) {
-    const today = new Date();
-    today.setDate(today.getDate() + 1);
-    this.minDate = today.toISOString().split('T')[0];
-
     this.form = this.fb.group({
       userId: ['', Validators.required],
-      bookId: ['', Validators.required],
-      mustReturnAt: ['', [Validators.required, this.futureDateValidator.bind(this)]]
+      bookId: ['', Validators.required]
     });
   }
 
-  futureDateValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) return null;
-    const selectedDate = new Date(control.value);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return selectedDate > today ? null : { pastDate: true };
-  }
-
   ngOnInit() {
+    this.isAdmin = this.authService.isAdmin();
     this.userService.getAll().subscribe({
       next: users => {
         this.users = users;
@@ -57,7 +52,14 @@ export class BorrowBookComponent implements OnInit {
     });
 
     this.bookService.getAll().subscribe({
-      next: books => this.books = books.filter(b => b.availableCopies > 0),
+      next: books => {
+        this.avaliableBooks = books
+          .filter(b => b.availableCopies > 0)
+          .map(book => ({
+            ...book,
+            displayName: `${book.title} (${book.availableCopies})`
+          }));
+      },
       error: err => console.error('Erro ao buscar livros:', err)
     });
   }
@@ -65,10 +67,14 @@ export class BorrowBookComponent implements OnInit {
   onSubmit() {
     if (this.form.invalid) return;
 
+    // Calcula data de devolução: 7 dias a partir de hoje
+    const returnDate = new Date();
+    returnDate.setDate(returnDate.getDate() + 7);
+
     const payload = {
       userId: Number(this.form.value.userId),
       bookId: Number(this.form.value.bookId),
-      mustReturnAt: new Date(this.form.value.mustReturnAt).toISOString()
+      mustReturnAt: returnDate.toISOString()
     };
 
     this.borrowingService.create(payload).subscribe({
@@ -77,6 +83,7 @@ export class BorrowBookComponent implements OnInit {
         this.router.navigate(['/dashboard']);
       },
       error: err => {
+        console.error('Erro completo:', err);
         this.notificationService.show('error', err.error?.message || 'Erro ao emprestar livro');
       }
     });
@@ -84,5 +91,18 @@ export class BorrowBookComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/dashboard']);
+  }
+
+  goToAddBook() {
+    this.router.navigate(['books/add']);
+  }
+
+  goToReturnBook() {
+    this.router.navigate(['books/return']);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

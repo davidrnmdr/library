@@ -3,12 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-
-export interface CreateBorrowingPayload {
-  userId: number;
-  bookId: number;
-  mustReturnAt: string;
-}
+import { CreateBorrowingPayload } from '../models/borrowing.model';
 
 @Injectable({ providedIn: 'root' })
 export class BorrowingService {

@@ -4,15 +4,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { Category } from '../components/book-card/book-card.component';
-
-export interface PageResponse<T> {
-  content: T[];
-  page: {
-    totalElements: number;
-    totalPages: number;
-  };
-}
+import { Category } from '../models/category.model';
+import { PageResponse } from '../models/page-response.model';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {

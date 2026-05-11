@@ -4,12 +4,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { Book, CreateBookPayload } from '../models/book.model';
-import { PageResponse } from '../models/page-response.model';
+import { Borrowing, ReturnBookPayload } from '../models/borrowing.model';
 
 @Injectable({ providedIn: 'root' })
-export class BookService {
-  private readonly url = `${environment.apiUrl}/book`;
+export class ReturnService {
+  private readonly url = `${environment.apiUrl}/borrowing`;
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -17,13 +16,13 @@ export class BookService {
     return new HttpHeaders({ Authorization: `Bearer ${this.authService.getToken()}` });
   }
 
-  getAll(): Observable<Book[]> {
-    return this.http.get<PageResponse<Book>>(`${this.url}?size=100`).pipe(
-      map(page => page.content)
+  getActiveBorrowings(userId: number): Observable<Borrowing[]> {
+    return this.http.get<any>(`${this.url}/active/${userId}?size=100`, { headers: this.headers() }).pipe(
+      map(response => response.content)
     );
   }
 
-  create(payload: CreateBookPayload): Observable<Book> {
-    return this.http.post<Book>(this.url, payload, { headers: this.headers() });
+  returnBook(payload: ReturnBookPayload): Observable<any> {
+    return this.http.post(`${this.url}/return`, payload, { headers: this.headers() });
   }
 }

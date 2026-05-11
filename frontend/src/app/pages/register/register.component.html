@@ -11,56 +11,60 @@
     <p-card class="w-full max-w-md">
       <ng-template pTemplate="header">
         <div class="text-center pt-6">
-          <h2 class="text-2xl font-bold text-gray-800">Login</h2>
+          <h2 class="text-2xl font-bold text-gray-800">Criar nova conta</h2>
         </div>
       </ng-template>
 
-      <form (ngSubmit)="onLogin()" class="space-y-5 p-4">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5 p-4">
         <div class="flex flex-col gap-2">
-          <label for="cpf" class="text-sm font-semibold">CPF</label>
+          <label class="text-sm font-semibold">CPF</label>
           <input
             pInputText
-            id="cpf"
-            [(ngModel)]="username"
-            name="username"
+            formControlName="cpf"
             (input)="onCpfInput($event)"
             placeholder="000.000.000-00"
             maxlength="14"
             class="w-full"
+            [class.ng-invalid]="isInvalid('cpf')"
+            [class.ng-dirty]="isInvalid('cpf')"
           />
+          <small *ngIf="isInvalid('cpf')" class="text-red-500">
+            CPF inválido. Digite um CPF válido.
+          </small>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label for="password" class="text-sm font-semibold">Senha</label>
+          <label class="text-sm font-semibold">Senha</label>
           <p-password
-            [(ngModel)]="password"
-            name="password"
-            [feedback]="false"
+            formControlName="password"
+            placeholder="Digite sua senha (mínimo 6 caracteres)"
             [toggleMask]="true"
-            placeholder="••••••••"
+            [feedback]="true"
             styleClass="w-full"
             inputStyleClass="w-full"
           />
+          <small *ngIf="isInvalid('password')" class="text-red-500">
+            Senha deve ter no mínimo 6 caracteres.
+          </small>
         </div>
 
         <div class="text-center">
           <p-button
-            label="Cadastre-se"
+            label="Já tem uma conta? Faça login"
             [text]="true"
             [link]="true"
             size="small"
             severity="secondary"
-            (onClick)="goToRegister()"
+            (onClick)="goToLogin()"
           />
         </div>
 
-        <p *ngIf="error" class="text-sm text-red-500 text-center">{{ error }}</p>
-
         <p-button
-          label="Entrar"
+          label="Registrar"
           type="submit"
+          [disabled]="form.invalid"
           severity="secondary"
-          styleClass="w-full bg-gray-400 hover:bg-gray-500 border-gray-400"
+          styleClass="w-full bg-gray-700 hover:bg-gray-800 border-gray-700 disabled:bg-gray-300"
         />
       </form>
     </p-card>
