@@ -1,0 +1,92 @@
+<div class="min-h-screen bg-gray-100">
+
+  <header class="bg-gray-800 px-8 h-16 flex items-center sticky top-0 z-10 shadow-lg">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">📚</span>
+      <h1 class="text-lg font-bold text-white">Biblioteca Comunitária</h1>
+    </div>
+  </header>
+
+  <main class="p-8">
+
+    <div class="flex items-center gap-2 mb-6">
+      <button (click)="onCancel()" class="text-gray-500 hover:text-gray-800 transition-colors cursor-pointer bg-transparent border-none text-sm">
+        ← Voltar
+      </button>
+      <span class="text-gray-300">/</span>
+      <h2 class="text-xl font-bold text-gray-800">Adicionar Livro</h2>
+    </div>
+
+    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-md p-8">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="flex flex-col gap-1.5 mb-5">
+          <label class="text-xs font-semibold text-gray-600">Título</label>
+          <input type="text" formControlName="title" placeholder="Ex: Dom Casmurro"
+            class="px-4 py-3 border rounded-lg text-sm outline-none transition-colors"
+            [class.border-gray-200]="!isInvalid('title')"
+            [class.border-red-400]="isInvalid('title')" />
+          <span *ngIf="isInvalid('title')" class="text-xs text-red-500">Título é obrigatório.</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-5">
+          <label class="text-xs font-semibold text-gray-600">Autor</label>
+          <input type="text" formControlName="author" placeholder="Ex: Machado de Assis"
+            class="px-4 py-3 border rounded-lg text-sm outline-none transition-colors"
+            [class.border-gray-200]="!isInvalid('author')"
+            [class.border-red-400]="isInvalid('author')" />
+          <span *ngIf="isInvalid('author')" class="text-xs text-red-500">Autor é obrigatório.</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-5">
+          <label class="text-xs font-semibold text-gray-600">ISBN</label>
+          <input type="text" formControlName="isbn" placeholder="Ex: 978-85-359-0277-8"
+            class="px-4 py-3 border rounded-lg text-sm outline-none transition-colors"
+            [class.border-gray-200]="!isInvalid('isbn')"
+            [class.border-red-400]="isInvalid('isbn')" />
+          <span *ngIf="isInvalid('isbn')" class="text-xs text-red-500">ISBN é obrigatório.</span>
+        </div>
+
+        <div class="flex flex-col gap-1.5 mb-5">
+          <label class="text-xs font-semibold text-gray-600">Número de Cópias</label>
+          <input type="number" formControlName="copies" min="1"
+            class="px-4 py-3 border rounded-lg text-sm outline-none transition-colors"
+            [class.border-gray-200]="!isInvalid('copies')"
+            [class.border-red-400]="isInvalid('copies')" />
+          <span *ngIf="isInvalid('copies')" class="text-xs text-red-500">Informe ao menos 1 cópia.</span>
+        </div>
+
+        <div class="flex flex-col gap-2 mb-8">
+          <label class="text-xs font-semibold text-gray-600">Categorias</label>
+          <div *ngIf="categories.length === 0" class="text-xs text-gray-400">Nenhuma categoria disponível.</div>
+          <div class="grid grid-cols-2 gap-2">
+            <label *ngFor="let cat of categories" class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                [value]="cat.id"
+                (change)="onCategoryChange(cat.id, $any($event.target).checked)"
+                class="cursor-pointer"
+              />
+              {{ cat.name }}
+            </label>
+          </div>
+          <span *ngIf="isInvalid('categoriesIds')" class="text-xs text-red-500">Selecione ao menos uma categoria.</span>
+        </div>
+
+        <div class="flex gap-3 justify-end">
+          <button type="button" (click)="onCancel()"
+            class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-sm font-semibold transition-colors cursor-pointer border-none">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="px-6 py-2.5 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-sm font-semibold transition-colors cursor-pointer border-none">
+            Salvar
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </main>
+
+</div>
