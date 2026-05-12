@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
+import { HeaderComponent } from '../../components/header/header.component';
 import { BookService } from '../../services/book.service';
 import { Book } from '../../models/book.model';
 import { User } from '../../models/user.model';
@@ -17,7 +18,7 @@ import { avaliableBooks } from '../../models/avaliable-books.model';
 @Component({
   selector: 'app-borrow-book',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, Select, Button, Card],
+  imports: [ReactiveFormsModule, CommonModule, Select, Button, Card, HeaderComponent],
   templateUrl: './borrow-book.component.html',
   styleUrl: './borrow-book.component.css'
 })
@@ -91,18 +92,5 @@ export class BorrowBookComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/dashboard']);
-  }
-
-  goToAddBook() {
-    this.router.navigate(['books/add']);
-  }
-
-  goToReturnBook() {
-    this.router.navigate(['books/return']);
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

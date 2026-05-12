@@ -23,7 +23,17 @@ export class BookService {
     );
   }
 
+  getById(id: number): Observable<Book | undefined> {
+    return this.getAll().pipe(
+      map(books => books.find(book => book.id === id))
+    );
+  }
+
   create(payload: CreateBookPayload): Observable<Book> {
     return this.http.post<Book>(this.url, payload, { headers: this.headers() });
+  }
+
+  update(id: number, payload: CreateBookPayload): Observable<Book> {
+    return this.http.put<Book>(`${this.url}/${id}`, payload, { headers: this.headers() });
   }
 }

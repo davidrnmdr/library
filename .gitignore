@@ -45,6 +45,11 @@ frontend/yarn-error.log*
 frontend/.vite/
 frontend/coverage/
 frontend/.nyc_output/
+frontend/.sass-cache/
+frontend/connect.lock
+frontend/typings/
+frontend/libpeerconnection.log
+frontend/testem.log
 
 # Environment files
 *.env

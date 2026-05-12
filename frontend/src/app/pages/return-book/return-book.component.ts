@@ -6,6 +6,7 @@ import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
+import { HeaderComponent } from '../../components/header/header.component';
 import { User } from '../../models/user.model';
 import { Borrowing } from '../../models/borrowing.model';
 import { UserService } from '../../services/user.service';
@@ -16,7 +17,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-return-book',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, Select, DatePicker, Button, Card],
+  imports: [ReactiveFormsModule, CommonModule, Select, DatePicker, Button, Card, HeaderComponent],
   templateUrl: './return-book.component.html',
   styleUrl: './return-book.component.css'
 })
@@ -96,18 +97,5 @@ export class ReturnBookComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/dashboard']);
-  }
-
-  goToAddBook() {
-    this.router.navigate(['books/add']);
-  }
-
-  goToBorrowBook() {
-    this.router.navigate(['books/borrow']);
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }

@@ -12,12 +12,16 @@
         (onClick)="onCancel()"
       />
       <span class="text-gray-300">/</span>
-      <h2 class="text-xl font-bold text-gray-800">Adicionar Livro</h2>
+      <h2 class="text-xl font-bold text-gray-800">Editar Livro</h2>
     </div>
 
     <div class="max-w-2xl mx-auto">
       <p-card>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+        <div *ngIf="loading" class="flex justify-center items-center py-8">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+
+        <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
 
           <div class="flex flex-col gap-2">
             <label class="text-sm font-semibold">Título</label>
@@ -50,9 +54,11 @@
               <div *ngFor="let cat of categories" class="flex items-center gap-2">
                 <p-checkbox
                   [value]="cat.id"
-                  (onChange)="onCategoryChange(cat.id, $event.checked)"
                   [binary]="true"
                   [inputId]="'cat-' + cat.id"
+                  [ngModel]="isCategorySelected(cat.id)"
+                  (onChange)="onCategoryChange(cat.id, $event.checked)"
+                  [ngModelOptions]="{standalone: true}"
                 />
                 <label [for]="'cat-' + cat.id" class="cursor-pointer">{{ cat.name }}</label>
               </div>
