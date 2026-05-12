@@ -9,6 +9,7 @@ import { LoginResponse } from '../models/auth.model';
 export class AuthService {
   private readonly TOKEN_KEY = 'auth_token';
   private readonly ROLE_KEY = 'user_role';
+  private readonly USER_ID_KEY = 'user_id';
 
   constructor(private http: HttpClient) {}
 
@@ -17,6 +18,9 @@ export class AuthService {
       tap(response => {
         localStorage.setItem(this.TOKEN_KEY, response.token);
         localStorage.setItem(this.ROLE_KEY, response.role);
+        if (response.userId) {
+          localStorage.setItem(this.USER_ID_KEY, response.userId.toString());
+        }
       })
     );
   }
@@ -37,9 +41,15 @@ export class AuthService {
     return this.getRole() === 'ROLE_ADMIN';
   }
 
+  getUserId(): number {
+    const id = localStorage.getItem(this.USER_ID_KEY);
+    return id ? parseInt(id, 10) : 0;
+  }
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.ROLE_KEY);
+    localStorage.removeItem(this.USER_ID_KEY);
   }
 
   isLoggedIn(): boolean {

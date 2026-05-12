@@ -1,49 +1,5 @@
 <div class="min-h-screen bg-gray-100">
-
-  <header class="bg-gray-800 px-8 h-16 flex items-center justify-between sticky top-0 z-10 shadow-lg">
-    <div class="flex items-center gap-3">
-      <span class="text-2xl">📚</span>
-      <h1 class="text-lg font-bold text-white">Biblioteca Comunitária</h1>
-    </div>
-    <div class="flex items-center gap-3">
-      <div class="flex items-center" *ngIf="isAdmin">
-        <p-button
-          label="Devolver"
-          icon="pi pi-upload"
-          [text]="true"
-          severity="secondary"
-        styleClass="white-label gray-hover"
-          (onClick)="goToReturnBook()"
-        />
-        <div class="h-8 w-px bg-gray-600"></div>
-        <p-button
-          label="Emprestar"
-          icon="pi pi-book"
-          [text]="true"
-          severity="secondary"
-        styleClass="white-label gray-hover"
-        />
-        <div class="h-8 w-px bg-gray-600"></div>
-        <p-button
-          label="Adicionar Livro"
-          icon="pi pi-plus"
-          [text]="true"
-          severity="secondary"
-        styleClass="white-label gray-hover"
-          (onClick)="goToAddBook()"
-        />
-        <div class="h-8 w-px bg-gray-600"></div>
-      </div>
-      <p-button
-        label="Sair"
-        icon="pi pi-sign-out"
-        [text]="true"
-        severity="secondary"
-        styleClass="white-label gray-hover"
-        (onClick)="logout()"
-      />
-    </div>
-  </header>
+  <app-header />
 
   <main class="p-8">
 

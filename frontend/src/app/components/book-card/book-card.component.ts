@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NgClass, NgFor, NgIf } from '@angular/common';
+import { Router } from '@angular/router';
 import { Book } from '../../models/book.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-book-card',
@@ -14,8 +16,15 @@ export class BookCardComponent implements OnInit {
   coverUrl: string = '';
   imageError: boolean = false;
   imageLoading: boolean = true;
+  isAdmin: boolean = false;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
+    this.isAdmin = this.authService.isAdmin();
     this.loadCoverImage();
   }
 
@@ -35,11 +44,15 @@ export class BookCardComponent implements OnInit {
     if (!this.imageError) {
       this.imageError = true;
       const cleanIsbn = this.book.isbn.replace(/[-\s]/g, '');
-      // Tenta uma URL alternativa mais simples
       this.coverUrl = `https://covers.openlibrary.org/b/isbn/${cleanIsbn}-M.jpg`;
     } else {
       this.imageLoading = false;
       this.coverUrl = '';
     }
+  }
+
+  onEditClick(event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/books/edit', this.book.id]);
   }
 }

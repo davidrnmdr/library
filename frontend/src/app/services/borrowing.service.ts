@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { CreateBorrowingPayload } from '../models/borrowing.model';
+import { CreateBorrowingPayload, Borrowing } from '../models/borrowing.model';
 
 @Injectable({ providedIn: 'root' })
 export class BorrowingService {
@@ -17,5 +17,9 @@ export class BorrowingService {
 
   create(payload: CreateBorrowingPayload): Observable<any> {
     return this.http.post(this.url, payload, { headers: this.headers() });
+  }
+
+  getBooksByUserId(userId: number): Observable<Borrowing[]> {
+    return this.http.get<Borrowing[]>(`${this.url}/user/${userId}`, { headers: this.headers() });
   }
 }

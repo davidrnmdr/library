@@ -1,0 +1,51 @@
+<button 
+  class="menu-button" 
+  (click)="toggleMenu()"
+  aria-label="Menu">
+  <i class="pi pi-bars text-white text-2xl"></i>
+</button>
+
+<p-drawer [(visible)]="visible" [modal]="false" [showCloseIcon]="false">
+  <ng-template pTemplate="header">
+    <span class="text-xl font-bold">Menu</span>
+  </ng-template>
+
+  <div class="flex flex-col">
+    <button 
+      class="menu-item"
+      (click)="navigateTo('/dashboard')">
+      <i class="pi pi-th-large"></i>
+      <span>Acervo</span>
+    </button>
+
+    <button 
+      class="menu-item"
+      (click)="navigateTo('/books/borrowed')">
+      <i class="pi pi-bookmark"></i>
+      <span>Meus Livros</span>
+    </button>
+
+    <div *ngIf="isAdmin">
+      <button 
+        class="menu-item"
+        (click)="navigateTo('/books/add')">
+        <i class="pi pi-plus"></i>
+        <span>Adicionar Livro</span>
+      </button>
+
+      <button 
+        class="menu-item"
+        (click)="navigateTo('/books/borrow')">
+        <i class="pi pi-book"></i>
+        <span>Emprestar</span>
+      </button>
+
+      <button 
+        class="menu-item"
+        (click)="navigateTo('/books/return')">
+        <i class="pi pi-upload"></i>
+        <span>Devolver</span>
+      </button>
+    </div>
+  </div>
+</p-drawer>

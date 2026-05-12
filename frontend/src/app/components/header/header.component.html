@@ -1,0 +1,17 @@
+<header class="bg-gray-800 px-8 h-16 flex items-center justify-between sticky top-0 z-10 shadow-lg">
+  <div class="flex items-center gap-3">
+    <app-sidebar-menu [isAdmin]="isAdmin" />
+    <span class="text-2xl">📚</span>
+    <h1 class="text-lg font-bold text-white">Biblioteca Comunitária</h1>
+  </div>
+  <div class="flex items-center gap-3">
+    <p-button
+      label="Sair"
+      icon="pi pi-sign-out"
+      [text]="true"
+      severity="secondary"
+      styleClass="text-white hover:bg-gray-700"
+      (onClick)="logout()"
+    />
+  </div>
+</header>
