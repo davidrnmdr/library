@@ -7,6 +7,7 @@ import { BorrowBookComponent } from './pages/borrow-book/borrow-book.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { ReturnBookComponent } from './pages/return-book/return-book.component';
 import { BorrowedBooksComponent } from './pages/borrowed-books/borrowed-books.component';
+import { AddCategoryComponent } from './pages/add-category/add-category.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,4 +19,5 @@ export const routes: Routes = [
   { path: 'books/edit/:id', component: EditBookComponent },
   { path: 'books/borrow', component: BorrowBookComponent },
   { path: 'books/return', component: ReturnBookComponent },
+  { path: 'category/add', component: AddCategoryComponent },
 ];

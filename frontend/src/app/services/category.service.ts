@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
-import { Category } from '../models/category.model';
+import { Category, CreateCategoryPayload, UpdateCategoryPayload } from '../models/category.model';
 import { PageResponse } from '../models/page-response.model';
 
 @Injectable({ providedIn: 'root' })
@@ -21,5 +21,13 @@ export class CategoryService {
     return this.http.get<PageResponse<Category>>(`${this.url}?size=100`).pipe(
       map(page => page.content)
     );
+  }
+
+  create(payload: CreateCategoryPayload): Observable<Category> {
+    return this.http.post<Category>(this.url, payload, { headers: this.headers() });
+  }
+
+  update(id: number, payload: UpdateCategoryPayload): Observable<Category> {
+    return this.http.put<Category>(`${this.url}/${id}`, payload, { headers: this.headers() });
   }
 }

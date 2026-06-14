@@ -28,9 +28,18 @@
     <div *ngIf="isAdmin">
       <button 
         class="menu-item"
-        (click)="navigateTo('/books/add')">
+        (click)="navigateTo('/books/add')"
+        id="btn-sidebar-add-book">
         <i class="pi pi-plus"></i>
         <span>Adicionar Livro</span>
+      </button>
+
+      <button 
+        class="menu-item"
+        (click)="navigateTo('/category/add')"
+        id="btn-sidebar-add-category">
+        <i class="pi pi-tags"></i>
+        <span>Cadastrar Categoria</span>
       </button>
 
       <button 
