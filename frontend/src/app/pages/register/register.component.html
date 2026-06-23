@@ -17,19 +17,18 @@
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5 p-4">
         <div class="flex flex-col gap-2">
-          <label class="text-sm font-semibold">CPF</label>
+          <label class="text-sm font-semibold">E-mail</label>
           <input
             pInputText
-            formControlName="cpf"
-            (input)="onCpfInput($event)"
-            placeholder="000.000.000-00"
-            maxlength="14"
+            type="email"
+            formControlName="email"
+            placeholder="seu.email@exemplo.com"
             class="w-full"
-            [class.ng-invalid]="isInvalid('cpf')"
-            [class.ng-dirty]="isInvalid('cpf')"
+            [class.ng-invalid]="isInvalid('email')"
+            [class.ng-dirty]="isInvalid('email')"
           />
-          <small *ngIf="isInvalid('cpf')" class="text-red-500">
-            CPF inválido. Digite um CPF válido.
+          <small *ngIf="isInvalid('email')" class="text-red-500">
+            E-mail inválido. Digite um e-mail válido.
           </small>
         </div>
 

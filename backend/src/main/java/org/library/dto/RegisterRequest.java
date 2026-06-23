@@ -1,13 +1,13 @@
 package org.library.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
 
-        @NotBlank(message = "O CPF é obrigatório")
-        @Pattern(regexp = "\\d{11}", message = "CPF deve conter 11 dígitos")
+        @Email(message = "O email deve ser válido")
+        @NotBlank(message = "O email é obrigatório")
         String username,
 
         @NotBlank(message = "A senha é obrigatória")

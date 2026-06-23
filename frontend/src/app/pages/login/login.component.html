@@ -17,15 +17,14 @@
 
       <form (ngSubmit)="onLogin()" class="space-y-5 p-4">
         <div class="flex flex-col gap-2">
-          <label for="cpf" class="text-sm font-semibold">CPF</label>
+          <label for="email" class="text-sm font-semibold">E-mail</label>
           <input
             pInputText
-            id="cpf"
+            id="email"
+            type="email"
             [(ngModel)]="username"
             name="username"
-            (input)="onCpfInput($event)"
-            placeholder="000.000.000-00"
-            maxlength="14"
+            placeholder="seu.email@exemplo.com"
             class="w-full"
           />
         </div>

@@ -23,6 +23,6 @@ scalar:
 
 app:
   admin:
-    username: ${DEFAULT_ADMIN_USERNAME:00000000000}
+    username: ${DEFAULT_ADMIN_USERNAME:admin@library.com}
     password: ${DEFAULT_ADMIN_PASSWORD:admin}
 

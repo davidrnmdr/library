@@ -26,69 +26,9 @@ export class RegisterComponent {
     private router: Router
   ) {
     this.form = this.fb.group({
-      cpf: ['', [Validators.required, this.cpfValidator]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
-  }
-
-  cpfValidator(control: AbstractControl): ValidationErrors | null {
-    if (!control.value) return null;
-    
-    const cpf = control.value.replace(/\D/g, '');
-    
-    if (cpf.length !== 11) {
-      return { invalidCpf: true };
-    }
-    
-    // Verifica se todos os dígitos são iguais
-    if (/^(\d)\1{10}$/.test(cpf)) {
-      return { invalidCpf: true };
-    }
-    
-    // Validação do primeiro dígito verificador
-    let sum = 0;
-    for (let i = 0; i < 9; i++) {
-      sum += parseInt(cpf.charAt(i)) * (10 - i);
-    }
-    let digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(9))) {
-      return { invalidCpf: true };
-    }
-    
-    // Validação do segundo dígito verificador
-    sum = 0;
-    for (let i = 0; i < 10; i++) {
-      sum += parseInt(cpf.charAt(i)) * (11 - i);
-    }
-    digit = 11 - (sum % 11);
-    if (digit >= 10) digit = 0;
-    if (digit !== parseInt(cpf.charAt(10))) {
-      return { invalidCpf: true };
-    }
-    
-    return null;
-  }
-
-  onCpfInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let value = input.value.replace(/\D/g, '');
-    
-    if (value.length > 11) {
-      value = value.substring(0, 11);
-    }
-    
-    // Aplica máscara: 000.000.000-00
-    if (value.length > 9) {
-      value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
-    } else if (value.length > 6) {
-      value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
-    } else if (value.length > 3) {
-      value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
-    }
-    
-    input.value = value;
-    this.form.get('cpf')?.setValue(value, { emitEvent: false });
   }
 
   onSubmit() {
@@ -97,9 +37,9 @@ export class RegisterComponent {
       return;
     }
 
-    const cpf = this.form.value.cpf.replace(/\D/g, '');
+    const email = this.form.value.email;
     
-    this.authService.register(cpf, this.form.value.password).subscribe({
+    this.authService.register(email, this.form.value.password).subscribe({
       next: (response) => {
         this.notificationService.show('success', 'Usuário registrado com sucesso!');
         this.router.navigate(['/login']);
