@@ -6,15 +6,118 @@ Este guia tem como objetivo fornecer um passo a passo prático para o desenvolvi
 
 ## Considerações Iniciais
 
-- Assume-se que o leitor tem conhecimentos básicos em Java, POO e bancos de dados relacionais
-- O foco é na construção de um MVP (Produto Mínimo Viável)
-- A arquitetura escolhida é a tradicional de camadas (Controller, Service, Repository) para manter a simplicidade e clareza sem abrir mão de boas práticas
+- Este guia assume que você está dando seus primeiros passos no desenvolvimento de software e tem noções básicas de lógica de programação.
+- O foco é a construção de um MVP (Produto Mínimo Viável) de um sistema de gerenciamento de biblioteca comunitária.
+- Em vez de apenas gerar código com Inteligência Artificial, o seu objetivo principal é compreender as decisões de projeto e atuar como um arquiteto e revisor crítico.
 
-## Arquitetura do Projeto
+---
 
-- **Controller**: Responsável por receber as requisições HTTP e retornar as respostas
-- **Service**: Contém a lógica de negócio da aplicação (regras de como o sistema resolve os problemas, ex: validações, cálculos, etc)
-- **Repository**: Interface para acesso ao banco de dados utilizando JPA/Hibernate
+## Fundamentos: Os Porquês do Nosso Projeto
+
+Antes de abrirmos a IDE ou digitarmos prompts para a IA, precisamos entender **o que** estamos construindo e **por que** escolhemos cada uma das peças do nosso sistema. As decisões técnicas não são tomadas por "moda", mas sim para resolver problemas reais de engenharia, organização de equipe e manutenção a longo prazo.
+
+---
+
+### 1. Por que usar Docker e Docker Compose?
+
+Se você já tentou rodar o projeto de um colega e ouviu a frase *"na minha máquina funciona, não sei por que na sua não está rodando"*, você já sentiu a dor que o **Docker** resolve.
+
+#### O Problema: A inconsistência dos ambientes
+Para rodar este MVP, precisamos de um banco de dados PostgreSQL ativo, de uma versão específica do Java (Java 21) e de dependências de sistema. Se cada estudante do CodeLab tiver que instalar manualmente o PostgreSQL, configurar usuários, senhas, portas e variáveis de ambiente no Windows, Linux ou macOS, perderemos dias inteiros apenas configurando o ambiente. Além disso, pequenas diferenças de versão podem gerar bugs difíceis de rastrear.
+
+#### A Solução: Containers
+O Docker nos permite "empacotar" a nossa aplicação e suas dependências (como o banco de dados) em uma unidade isolada chamada **Container**. 
+- Imagine o container como uma **caixa de navio padronizada**: ela carrega tudo o que a aplicação precisa para rodar (código, runtime do Java, bibliotecas do sistema), independente de onde o navio (seu sistema operacional) esteja navegando.
+- Uma **Imagem** é a receita dessa caixa (o molde). O **Container** é a caixa rodando na prática.
+
+#### E o Docker Compose?
+O nosso projeto não tem apenas uma peça. Ele tem o backend (Java/Spring), o banco de dados (PostgreSQL) e o frontend (Angular). O **Docker Compose** funciona como um **orquestrador ou gerente de condomínio**. Através de um único arquivo (`docker-compose.yml`), nós definimos como esses containers devem ser criados, quais portas eles vão expor para o seu computador e como eles vão se comunicar. 
+Com apenas um comando (`docker compose up`), todo o ecossistema do MVP sobe e se conecta automaticamente.
+
+---
+
+### 2. Por que usar um Banco de Dados Relacional (PostgreSQL)?
+
+O banco de dados é a memória de longo prazo da nossa aplicação. Para a biblioteca, escolhemos o **PostgreSQL**, que é um banco de dados **relacional (SGBDR)**.
+
+#### O que é um Banco Relacional?
+Bancos relacionais organizam as informações em tabelas que se assemelham a planilhas muito inteligentes, compostas por:
+- **Tabelas (Entities):** Representam os conceitos do sistema (ex: `usuarios`, `livros`, `emprestimos`).
+- **Linhas (Rows/Tuplas):** São os registros de dados reais (ex: o usuário "João Silva", o livro "Dom Casmurro").
+- **Colunas (Columns/Atributos):** São as características do registro (ex: `email`, `isbn`, `data_cadastro`).
+- **Chaves Primárias (PK - Primary Key):** O identificador único de cada linha (garante que não existam dois registros idênticos).
+- **Chaves Estrangeiras (FK - Foreign Key):** O elo que conecta uma tabela à outra (cria a relação).
+
+#### Por que isso é perfeito para uma Biblioteca?
+Uma biblioteca comunitária é movida a **relações**: um **usuário** faz um **empréstimo** de um **livro**. 
+Se utilizássemos um banco não-relacional (NoSQL, como MongoDB), onde os dados são salvos de forma mais livre e isolada, correríamos o risco de um estudante deletar o cadastro de um livro do acervo enquanto ele ainda constasse como emprestado para alguém. Isso geraria dados órfãos e relatórios inconsistentes.
+
+O banco relacional se destaca por garantir as propriedades **ACID**:
+- **Atomicidade:** Ou a transação acontece por inteiro (gravar o empréstimo E diminuir o estoque do livro), ou nada é salvo. Não há meio-termo.
+- **Consistência:** O banco segue regras rígidas. Você não pode associar um empréstimo a um `usuario_id` que não existe.
+- **Isolamento:** Vários usuários podem alugar livros ao mesmo tempo sem que uma transação interfira na outra.
+- **Durabilidade:** Uma vez salvo, o dado não se perde, mesmo que ocorra uma queda de energia no servidor.
+
+O **PostgreSQL** foi escolhido por ser o banco relacional gratuito e de código aberto mais robusto do mercado, sendo o padrão utilizado na imensa maioria das empresas de tecnologia.
+
+---
+
+### 3. Por que Java 21 e Spring Boot?
+
+O ecossistema Java é um dos pilares do desenvolvimento corporativo global. Usamos o **Java 21** junto com o framework **Spring Boot 3**, pois é uma combinação popular, robusta e com uma vasta quantidade de recursos e documentação disponível, o que facilita o aprendizado e o desenvolvimento de aplicações web.
+
+#### Por que Java (e por que a versão 21)?
+1. **Tipagem Estática:** No Java, toda variável deve ter um tipo declarado (ex: `String`, `int`, `Book`). Se você tentar passar um texto onde o sistema espera um número, o compilador te avisa na hora, impedindo que esse erro chegue até o usuário final.
+2. **Orientação a Objetos (POO):** O Java nos força a modelar o software pensando em "objetos" da vida real (`Usuario`, `Livro`, `Emprestimo`). Para estudantes, esta é a melhor forma de fixar conceitos de abstração, encapsulamento, herança e polimorfismo.
+3. **Java 21 (LTS):** É uma versão de suporte de longo prazo extremamente moderna. Ela introduziu recursos como os **Records** (que reduzem drasticamente a verbosidade ao criar classes de transporte de dados) e melhorias imensas de performance.
+
+#### Por que o Spring Boot?
+Se você tentasse criar uma aplicação web usando Java puro, precisaria configurar manualmente um servidor web (como o Apache Tomcat), gerenciar conexões de rede HTTP, lidar com a conversão de JSON para objetos Java e criar toda a lógica de segurança. Isso exigiria centenas de linhas de código de configuração (chamado *boilerplate*).
+
+O **Spring Boot** é um framework opinativo que resolve isso:
+- **Servidor Embutido:** Ele já vem com o Tomcat configurado internamente. Basta rodar o projeto e o servidor web inicia sozinho na porta 8080.
+- **Injeção de Dependências:** Ele cuida de criar e gerenciar o ciclo de vida dos nossos objetos (Beans). Você não precisa ficar dando `new` a todo momento.
+- **Spring Data JPA & Hibernate:** Em vez de escrevermos consultas SQL complexas (`SELECT * FROM livros...`), o Spring Data traduz nossos métodos Java em comandos SQL compatíveis com o PostgreSQL de forma transparente.
+
+---
+
+### 4. Por que a Arquitetura em Camadas (e como ela funciona)?
+
+Escrever todo o código do sistema em um único arquivo gigante tornaria a aplicação impossível de manter. Por isso, dividimos o backend do MVP em **Camadas**.
+
+Para entender essa divisão, pense em um **Restaurante**:
+
+#### O Garçom (Controller)
+É a porta de entrada. O cliente (Frontend/Angular) envia uma requisição HTTP para uma rota (ex: `POST /book`). O Controller (Garçom) é responsável por atender essa chamada, verificar se a requisição está correta (validações do DTO) e passar o pedido para a cozinha (Service). **O garçom não cozinha!** Ele apenas atende e entrega as respostas HTTP (como `200 OK` ou `201 Created`).
+
+#### O Cozinheiro (Service)
+É o cérebro da aplicação. O Service (Cozinheiro) conhece as regras de negócio da biblioteca (a "receita"). É aqui que validamos se o usuário já estourou o limite de empréstimos, se o livro realmente está disponível, ou se a data de devolução é posterior à data atual. Ele pega as informações brutas, aplica as regras e prepara o resultado.
+
+#### O Despenseiro (Repository)
+O Repository é quem tem a chave da despensa (o banco de dados). O Service não sabe mexer diretamente no PostgreSQL; ele apenas pede ao Repository: *"Busque o livro com o ID X para mim"* ou *"Salve este novo registro"*. Graças ao Spring Data JPA, essa camada se comunica diretamente com o Hibernate para buscar e salvar os dados nas tabelas.
+
+#### O Prato Feito (DTO - Data Transfer Object)
+No restaurante, o cliente não quer ver a cozinha bagunçada ou ter acesso a ingredientes crus que estão no estoque. Ele quer o prato pronto e embalado.
+O **DTO** é essa embalagem personalizada. Ele garante que:
+1. Não vazemos informações confidenciais do banco de dados (como senhas criptografadas ou IDs internos desnecessários).
+2. O Frontend receba exatamente o formato de dados que ele precisa para renderizar a tela, de forma limpa e otimizada.
+3. Possamos ter um DTO específico para entrada (ex: `CreateBookDTO`, contendo apenas título e autor) e outro para saída (ex: `BookDTO`, contendo ID, título, autor e categorias).
+
+---
+
+### 5. Por que Angular + TailwindCSS no Frontend? (Visão Geral)
+
+Embora o foco deste guia seja o backend, o MVP conta com um frontend em **Angular** e **TailwindCSS** para que os usuários finais interajam com o sistema.
+
+#### Por que Angular?
+O Angular é um framework frontend corporativo mantido pelo Google. Diferente de bibliotecas menores, ele é uma solução completa (*batteries included*). Ele traz uma estrutura rígida baseada em **Componentes** e **TypeScript** (que traz para o navegador a mesma segurança de tipagem que o Java nos dá no backend). 
+Em uma fábrica de software como o CodeLab, onde estudantes entram e saem de projetos ao final de cada semestre, a vigidez estrutural do Angular garante que qualquer pessoa consiga entender onde estão as telas, as rotas e os serviços frontend do projeto sem dificuldades.
+
+#### Por que TailwindCSS?
+Em vez de escrevermos arquivos de estilização CSS gigantes (`index.css` lotado de classes customizadas difíceis de nomear e organizar), o TailwindCSS nos fornece **classes utilitárias prontas** direto no HTML (ex: `class="flex items-center justify-between p-4 bg-blue-600 rounded-lg text-white"`). Isso agiliza o design do MVP, permitindo que a interface fique moderna, responsiva e bonita rapidamente.
+
+#### Como o Frontend e o Backend se conversam?
+Eles se comunicam por meio de requisições **HTTP** assíncronas utilizando o padrão **REST**. O backend expõe uma documentação viva (gerada pelo **OpenAPI/Scalar**). O frontend lê esse "contrato" e faz chamadas enviando e recebendo dados em formato **JSON** (JavaScript Object Notation), que é a linguagem universal de troca de dados na web moderna.
 
 ## Dicas Gerais para o Uso de IA
 
